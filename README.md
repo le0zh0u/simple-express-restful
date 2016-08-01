@@ -179,3 +179,35 @@ Then open index.jade. And update its skeleton to complex.
         // / Wrapper
     
 Then run it.
+
+### Database
+
+create database.
+
+    use simple-express-restful
+    
+Insert data list.
+
+    db.userlist.insert({'username' : 'test1','email' : 'test1@test.com','fullname' : 'Bob Smith','age' : 27,'location' : 'San Francisco','gender' : 'Male'})
+    
+### List Users
+Change `app.js` to list users.
+
+Need to add some hooks for Monk.
+
+    //Database
+    var mongo = require('mongodb');
+    var monk = require('monk');
+    var db = monk('localhost:27017/simple-express-restful');
+    
+Add these codes above defining routers. And then, make our database accessible to our various http requests.
+
+    //Make our db accessible to our router
+    app.use(function (req, res, next) {
+      req.db = db;
+      next();
+    });
+    
+Add cods above use router.
+
+Next to move on to routing.
