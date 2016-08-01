@@ -28,7 +28,8 @@ To delete data, use DELETE.
     
 ##### Be Stateless
 It boils down to `don't store state information on the server`.
-It u must save state, save it on the client side via cookies or other methods.
+
+If u must save state, save it on the client side via cookies or other methods.
 
 ##### Expose directory structure-like URIs
 Good:
@@ -42,3 +43,35 @@ Bad:
 ##### Transfer XML, JavaScript Object Notation (JSON), or both.
 
 you can easily manipulate the data in your presentation layer without having to hit your servers, unless you need new data.
+
+
+### Start Setup
+
+    express simple-express-restful
+    
+Update `package.json`
+
+    {
+      "name": "simple-express-restful",
+      "version": "0.0.0",
+      "private": true,
+      "scripts": {
+        "start": "node ./bin/www"
+      },
+      "dependencies": {
+        "body-parser": "~1.15.1",
+        "cookie-parser": "~1.4.3",
+        "debug": "~2.2.0",
+        "express": "~4.13.4",
+        "jade": "~1.11.0",
+        "morgan": "~1.7.0",
+        "serve-favicon": "~2.3.0",
+        "mongodb": "^1.4.4",
+        "monk": "^1.0.1"
+      }
+    }
+
+Then, `npm install`
+
+And `mkdir data `, to create folder for MongoDB data.
+
