@@ -223,3 +223,39 @@ Find `users.js` in `/routes`, update three line under the comments.
     });
     
 It means if you do an HTTP GET to /users/userlist, server will return JSON that lists all of the users in the database.
+
+Then update `global.js` to fill user list table via javascript.
+
+    // UserList data array for filling in info box.
+    var userListData = [];
+    
+    //DOM ready==============
+    $(document).ready(function () {
+        //Populate the user table on initial page load
+        populateTable();
+    });
+    
+    //Function ===========
+    
+    //Fill table with data
+    function populateTable() {
+    
+        //Empty content string
+        var tableContent = '';
+    
+        //jQuery AJAX call for JSON
+        $.getJSON('/users/userlist', function (data) {
+            //For each item in our JSON, add a table row and cells to the content string
+            $.each(data, function () {
+                tableContent += '<tr>';
+                tableContent += '<td><a href="#" class="linkshowuser" rel="' + this.username + '">'+this.username+'</a> </td>';
+                tableContent += '<td>'+this.email+'</td>';
+                tableContent += '<td><a href="#" class="linkdeleteuser" rel="' +this._id +'">delete</a></td>';
+                tableContent += '</tr>';
+            });
+    
+            //Inject the whole content string into our existing HTML table
+            $('#userList table tbody').html(tableContent);
+        });
+    };
+  
