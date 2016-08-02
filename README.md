@@ -211,3 +211,15 @@ Add these codes above defining routers. And then, make our database accessible t
 Add cods above use router.
 
 Next to move on to routing.
+
+Find `users.js` in `/routes`, update three line under the comments.
+
+    router.get('/userlist', function(req, res) {
+      var db = req.db;
+      var collection = db.get('userlist');
+      collection.find({},{}, function (e, docs) {
+        res.json(docs);
+      });
+    });
+    
+It means if you do an HTTP GET to /users/userlist, server will return JSON that lists all of the users in the database.
