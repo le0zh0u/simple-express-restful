@@ -322,3 +322,95 @@ Next, update `index.jade` to add a panel for user info. And add following codes 
             // /USER INFO
             
 
+### Add User
+
+Add a set of form fields with which to add a new user. add following codes right below user list ,but above the closing wrapper comment:
+
+    //Add User
+            h2 Add User
+            #addUser
+                fieldset
+                    input#inputUserName(type='text', placeholder='Username')
+                    input#inputUserEmail(type='text', placeholder='Email')
+                    br
+                    input#inputUserFullname(type='text', placeholder='Full Name')
+                    input#inputUserAge(type='text', placeholder='Age')
+                    br
+                    input#inputUserLocation(type='text', placeholder='Location')
+                    input#inputUserGender(type='text', placeholder='gender')
+                    br
+                    button#btnAddUser Add User
+            // /Add User 
+     
+Then, add POSTing for adding user in `users.js`.
+
+    /**
+     * POST to adduser.
+     */
+    router.post('/adduser', function (req, res) {
+      var db = req.db;
+      var collection = db.get('userlist');
+      collection.insert(req.body, function (err, result) {
+        res.send(
+            (err === null) ? {msg:''}:{msg:err}
+        );
+      });
+    });
+    
+Update `global.js` to make button effect.Add following codes below user list name click.
+
+    // Add User button click
+        $('#btnAddUser').on('click', addUser);
+        
+build `addUser` function.POST data via AJAX to addUser service.
+
+    //Add User
+    function addUser(event) {
+        event.preventDefault();
+    
+        //Super basic validation - increase errorCount variable if any fields are blank
+        var errorCount = 0;
+        $('#addUser input').each(function (index, val) {
+            if ($(this).val() === ''){errorCount++;}
+        });
+    
+        //Check and make sure errorCount's still at zero
+        if (errorCount === 0){
+    
+            //If it is, compile all user info into one object
+            var newUser = {
+                'username' : $('#addUser fieldset input#inputUserName').val(),
+                'email' : $('#addUser fieldset input#inputUserEmail').val(),
+                'fullname' : $('#addUser fieldset input#inputUserFullname').val(),
+                'age' : $('#addUser fieldset input#inputUserAge').val(),
+                'location' : $('#addUser fieldset input#inputUserLocation').val(),
+                'gender' : $('#addUser fieldset input#inputUserGender').val()
+            }
+    
+            //Use AJAX to post the object to our adduser service
+            $.ajax({
+                type: 'POST',
+                data: newUser,
+                url: '/users/adduser',
+                dataType: 'JSON'
+            }).done(function (response) {
+    
+                //Check for successful response
+                if (response.msg === ''){
+                    //Clear the form inputs
+                    $('#addUser fieldset input').val('');
+    
+                    //Update the table
+                    populateTable();
+                }else{
+                    //If something goes wrong, alert the error message thatour service returned
+                    alert('Error: '+ response.msg);
+                }
+            });
+        }else{
+            //If errorCount is more than 0, error out
+            alert('Please fill in all fields');
+            return false;
+        }
+    };
+    
