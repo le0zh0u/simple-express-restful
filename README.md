@@ -414,3 +414,74 @@ build `addUser` function.POST data via AJAX to addUser service.
         }
     };
     
+### Delete User
+This module is easier than adding users, but it's largely the same process: update our route file and update global.js.
+But wo don't have to touch index.jade, because we already put our delete links in there.
+
+Update `/routes/users.js`, for adding delete function. Type following:
+
+    /**
+     * DELETE to deleteUser.
+     */
+    router.delete('/deleteuser/:id', function (req, res) {
+        var db = req.db;
+        var collection = db.get('userlist');
+        var userToDelete = req.params.id;
+        collection.remove({'_id': userToDelete}, function (err) {
+            res.send((err === null) ? {msg: ''} : {msg: 'error: ' + err})
+        });
+    });
+    
+    
+We pass in an ID parameter, and MongoDB matches it up with the unique _id field that it generates for every entry in a collection, and nukes that entry from orbit.
+
+Then move back to `global.js` fo finish things up.
+
+Need to add a quick delete routine in DOM Ready section:
+
+    //Delete User link click
+        $('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
+
+---
+
+**Note:**
+when working with jQuery's 'on' method, inorder to capture dynamically inserted links, you need to reference a static element on the page first. That's why our selector is the table's tbody element - which remains constant regardless of adding or removing users - and then we're specifying the specific links we're trying to catch in the .on parameters.
+
+---
+
+Next, build that deleteUser function down at the bottom of our file:
+
+    //DELETE User
+    function deleteUser(event) {
+        event.preventDefault();
+    
+        //Pop up a confirmation dialog
+        var confirmation = confirm('Are you sure you want to delete this user?');
+    
+        //Check and make sure the user confirmed
+        if (confirmation === true) {
+    
+            //If they did, do our delete
+            $.ajax({
+                type: 'DELETE',
+                url: '/users/deleteuser/' + $(this).attr('rel')
+            }).done(function (response) {
+                //Check for a successful response
+                if (response.msg === '') {
+    
+                } else {
+                    alert('Error: ' + response.msg);
+                }
+    
+                //Update the table
+                populateTable();
+            });
+        } else {
+            //If they said no to the confirm, do notiong
+            return false;
+        }
+    };
+    
+
+    
+
